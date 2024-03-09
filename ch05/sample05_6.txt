@@ -1,0 +1,33 @@
+次のPHPのプログラムがあります。
+これをPythonに書き直してください。
+
+```
+<?php
+// CSVファイルのパスを指定
+$csvFilePath = 'example.csv';
+
+// 配列を初期化
+$data = [];
+
+// CSVファイルを読み込む
+if (($handle = fopen($csvFilePath, 'r')) !== false) {
+    // 1行目を列名として読み込む
+    $columns = fgetcsv($handle);
+    
+    // 列名をキーとしてデータを読み込む
+    while (($row = fgetcsv($handle)) !== false) {
+        $rowData = [];
+        foreach ($columns as $index => $columnName) {
+            $rowData[$columnName] = $row[$index];
+        }
+        $data[] = $rowData;
+    }
+    
+    // ファイルを閉じる
+    fclose($handle);
+}
+
+// 結果を表示（テスト用）
+print_r($data);
+?>
+```

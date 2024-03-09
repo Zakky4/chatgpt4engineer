@@ -1,0 +1,132 @@
+次のコードのクラス図を作ってください。
+Diagramsを使って描いてください。
+
+```
+class Database {
+    private $host = 'localhost';
+    private $db_name = 'your_database_name';
+    private $username = 'your_db_username';
+    private $password = 'your_db_password';
+    public $conn;
+
+    public function connect() {
+        $this->conn = null;
+        try {
+            $this->conn = new PDO('mysql:host=' . $this->host . ';dbname=' . $this->db_name, $this->username, $this->password);
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch(PDOException $exception) {
+            echo 'Connection error: ' . $exception->getMessage();
+        }
+        return $this->conn;
+    }
+}
+
+class Group {
+    private $conn;
+    
+    public function __construct($db) {
+        $this->conn = $db;
+    }
+
+    public function getUsersByGroupId($group_id) {
+        $query = "SELECT u.* FROM users u
+                  JOIN user_group ug ON u.id = ug.user_id
+                  WHERE ug.group_id = :group_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':group_id', $group_id);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function addUserToGroup($user_id, $group_id) {
+        $query = "INSERT INTO user_group (user_id, group_id) VALUES (:user_id, :group_id)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':group_id', $group_id);
+        $stmt->execute();
+    }
+
+    public function removeUserFromGroup($user_id, $group_id) {
+        $query = "DELETE FROM user_group WHERE user_id = :user_id AND group_id = :group_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':group_id', $group_id);
+        $stmt->execute();
+    }
+
+    public function getGroupById($group_id) {
+        $query = "SELECT * FROM groups WHERE id = :group_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':group_id', $group_id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+}
+
+class User {
+    private $conn;
+    
+    public function __construct($db) {
+        $this->conn = $db;
+    }
+
+    public function addUser($username, $password, $email) {
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        $query = "INSERT INTO users (username, password, email) VALUES (:username, :password, :email)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':password', $hashed_password);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+    }
+
+    public function getUserById($user_id) {
+        $query = "SELECT * FROM users WHERE id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updateUser($user_id, $username, $email) {
+        $query = "UPDATE users SET username = :username, email = :email WHERE id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+    }
+
+    public function deleteUser($user_id) {
+        $query = "DELETE FROM users WHERE id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+    }
+
+    public function changePassword($user_id, $new_password) {
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+        $query = "UPDATE users SET password = :password WHERE id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':password', $hashed_password);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+    }
+
+    public function changeUsername($user_id, $new_username) {
+        $query = "UPDATE users SET username = :username WHERE id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':username', $new_username);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+    }
+
+    public function changeEmail($user_id, $new_email) {
+        $query = "UPDATE users SET email = :email WHERE id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':email', $new_email);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+    }
+}
+```

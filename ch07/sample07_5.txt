@@ -1,0 +1,7 @@
+Webサイトを作っています。
+サイトポリシーが必要なので、作ってください。
+
+- サイト名は「にゃんこの館」
+- サイトURLは「https://nyanko.example.jp/」
+- 会社名は「necoコーポレーション」
+- お問い合わせフォームは「https://nyanko.example.jp/form/」

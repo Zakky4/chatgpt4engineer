@@ -1,0 +1,70 @@
+次のコードの概要を教えてください。1
+
+```
+class User {
+    private $conn;
+    
+    public function __construct($db) {
+        $this->conn = $db;
+    }
+
+    public function addUser($username, $password, $email) {
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        $query = "INSERT INTO users (username, password, email) VALUES (:username, :password, :email)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':password', $hashed_password);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+    }
+
+    public function getUserById($user_id) {
+        $query = "SELECT * FROM users WHERE id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function updateUser($user_id, $username, $email) {
+        $query = "UPDATE users SET username = :username, email = :email WHERE id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':username', $username);
+        $stmt->bindParam(':email', $email);
+        $stmt->execute();
+    }
+
+    public function deleteUser($user_id) {
+        $query = "DELETE FROM users WHERE id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+    }
+
+    public function changePassword($user_id, $new_password) {
+        $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
+        $query = "UPDATE users SET password = :password WHERE id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':password', $hashed_password);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+    }
+
+    public function changeUsername($user_id, $new_username) {
+        $query = "UPDATE users SET username = :username WHERE id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':username', $new_username);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+    }
+
+    public function changeEmail($user_id, $new_email) {
+        $query = "UPDATE users SET email = :email WHERE id = :user_id";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':email', $new_email);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
+    }
+}
+```

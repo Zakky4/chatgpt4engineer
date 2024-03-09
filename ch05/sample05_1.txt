@@ -1,0 +1,23 @@
+Laravelプロジェクトがあります。
+次のように在庫を管理するモデルがあります。
+商品名はproductname、数量はquantityです。
+
+```
+class Inventory extends Model
+{
+    use HasFactory;
+    
+    protected $fillable = [
+        'product_name',
+        'product_image',
+        'quantity',
+        'price',
+    ];
+    
+}
+```
+
+次のように入力エラーのチェックをするコードを追加してください。
+
+- 商品名を20文字以下
+- 数量を500個以下

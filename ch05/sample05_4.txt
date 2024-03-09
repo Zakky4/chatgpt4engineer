@@ -1,0 +1,11 @@
+下記の画像アップロード処理があります。
+言語はPHPです。
+この処理に、サムネイル画像を作る処理を入れてください。
+サムネイル画像の大きさは、幅300ピクセルにしてください。
+
+```
+    if ($request->hasFile('product_image')) {
+        $imagePath = $request->file('product_image')->store('product_images', 'public');
+        $validatedData['product_image'] = $imagePath;
+    }
+```
